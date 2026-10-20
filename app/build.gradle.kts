@@ -47,6 +47,13 @@ android {
     }
 }
 
+androidComponents {
+    onVariants { variant ->
+        // Dexmaker loads JVMTI agents by name; extract them from the test APK.
+        variant.androidTest?.packaging?.jniLibs?.useLegacyPackaging?.set(true)
+    }
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -92,8 +99,9 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.7.0")
     androidTestImplementation(kotlin("test"))
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
-    androidTestImplementation ("org.mockito:mockito-core:5.18.0")
-    androidTestImplementation ("com.linkedin.dexmaker:dexmaker-mockito:2.28.3")
+    // Static clock mocking for deterministic date-binding tests on Android P+.
+    // This supplies its compatible Mockito version and replaces the non-inline mock maker.
+    androidTestImplementation("com.linkedin.dexmaker:dexmaker-mockito-inline-extended:2.28.3")
     androidTestImplementation ("androidx.test.espresso:espresso-contrib:3.7.0")
     androidTestImplementation("androidx.fragment:fragment-testing:1.8.9")
     debugImplementation("androidx.fragment:fragment-testing-manifest:1.8.9")
